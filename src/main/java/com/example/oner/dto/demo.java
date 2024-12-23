@@ -1,4 +1,4 @@
 package com.example.oner.dto;
 
-public class UserRequestDto {
+public class demo {
 }
