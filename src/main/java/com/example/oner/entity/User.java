@@ -1,15 +1,17 @@
 package com.example.oner.entity;
 
+import com.example.oner.config.PasswordEncoder;
+import com.example.oner.dto.User.UserRequestDto;
 import com.example.oner.enums.UserRole;
+import com.example.oner.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "users")
 public class User extends BaseEntity{
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,20 +29,33 @@ public class User extends BaseEntity{
     // USER, ADMIN
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role;
+    private UserRole userRole;
 
-    private LocalDateTime deletedAt;
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus userStatus = UserStatus.ACTIVE;
 
     public User() {}
 
-    public User(String name ,String email, String password, UserRole role) {
+    public User(UserRequestDto requestDto){
+        this.name = requestDto.getName();
+        this.email = requestDto.getEmail();
+        this.userRole = requestDto.getUserRole();
+    }
+
+    public User(String name ,String email, String password, UserRole userRole) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.userRole = userRole;
     }
 
-    public void setDeletedAt(){
-        this.deletedAt = LocalDateTime.now();
+    public void setStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
+
+    public void setPassword(String encodePassword){
+        this.password = encodePassword;
+    }
+
 }
