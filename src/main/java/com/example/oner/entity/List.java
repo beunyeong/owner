@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Lists {
+@Table(name = "list")
+public class List {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -19,16 +20,12 @@ public class Lists {
 
     private int positionList;
 
-    public Lists() {}
+    public List() {}
 
-    public Lists(Board board, String listTitle, int positionList) {
+    public List(Board board, String listTitle, int positionList) {
         this.board = board;
         this.listTitle = listTitle;
         this.positionList = positionList;
     }
-
-
-
-
 
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
 @Entity
 @Getter
 @Table(name = "member")
-public class Members extends BaseEntity {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,9 +30,9 @@ public class Members extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberWait wait;
 
-    public Members(){}
+    public Member(){}
 
-    public Members(User user, Workspace workspace, MemberRole role, MemberWait wait) {
+    public Member(User user, Workspace workspace, MemberRole role, MemberWait wait) {
         this.user = user;
         this.workspace = workspace;
         this.role = role;

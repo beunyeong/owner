@@ -1,13 +1,13 @@
 package com.example.oner.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
-
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Comment {
+@Table(name = "comment")
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,13 +15,17 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
-    private Cards card;
+    private Card card;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Members member;
+    private Member member;
 
-    private String detail;
+    private String commentTitle;
+
+    private String description;
+
+    private LocalDateTime expiredDate;
 
     public Comment() {}
 
