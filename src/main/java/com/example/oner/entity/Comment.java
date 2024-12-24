@@ -4,11 +4,10 @@ package com.example.oner.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Comments {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +21,8 @@ public class Comments {
     @JoinColumn(name = "member_id")
     private Members member;
 
-    private String commentTitle;
+    private String detail;
 
-    private String description;
+    public Comment() {}
 
-    private LocalDateTime expiredDate;
-
-    public Comments() {}
 }
