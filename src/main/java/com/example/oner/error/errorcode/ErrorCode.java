@@ -16,6 +16,7 @@ public enum ErrorCode {
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_USER(UNAUTHORIZED, "권한이 없습니다. 해당유저만 가능합니다."),
+    PASSWORD_ERROR(UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 
     /* 403 FORBIDDEN : 권한이 없음 */
     INVALID_USER_ROLE(FORBIDDEN, "사장님만 가능한 작업입니다."),
