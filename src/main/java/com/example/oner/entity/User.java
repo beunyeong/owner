@@ -12,7 +12,6 @@ import lombok.Getter;
 @Table(name = "users")
 public class User extends BaseEntity{
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,14 +1,13 @@
 package com.example.oner.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Cards extends BaseEntity {
+@Table(name = "card")
+public class Card extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +15,11 @@ public class Cards extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "list_id")
-    private Lists lists;
+    private List lists;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Members member;
+    private Member member;
 
     private String cardTitle;
 
@@ -34,11 +33,11 @@ public class Cards extends BaseEntity {
 
     private Long beforeId;
 
-    public Cards() {
+    public Card() {
         this.views = 0;
     }
 
-    public Cards(Lists lists, Members member, String cardTitle, String description, LocalDateTime dueDate) {
+    public Card(List lists, Member member, String cardTitle, String description, LocalDateTime dueDate) {
         this.lists = lists;
         this.member = member;
         this.cardTitle = cardTitle;
