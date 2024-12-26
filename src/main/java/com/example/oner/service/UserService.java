@@ -12,6 +12,7 @@ import com.example.oner.error.exception.CustomException;
 import com.example.oner.repository.UserRepository;
 import com.example.oner.util.AuthenticationScheme;
 import com.example.oner.util.JwtProvider;
+import com.slack.api.methods.SlackApiException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.Objects;
 
 
@@ -32,12 +35,12 @@ import java.util.Objects;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
     private final SignUpValidation signUpValidation;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final SlackService slackService;
 
     //회원가입
     public UserResponseDto signUp(UserRequestDto requestDto){
@@ -59,20 +62,15 @@ public class UserService {
         user.setPassword(bCryptPasswordEncoder.encode(requestDto.getPassword()));
         User saveUser = userRepository.save(user);
 
+        String message = saveUser.getName()+"님께서 회원가입 하셨습니다.";
+        sendMessageFromSlack(message);
+
         return new UserResponseDto(saveUser);
     }
 
+
+
     //로그인
-//    public LoginResponseDto login(LoginRequestDto requestDto){
-//
-//        User findUser = userRepository.findUserByEmail(requestDto.getEmail())
-//                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-//
-//        if (!bCryptPasswordEncoder.matches(requestDto.getPassword(),findUser.getPassword())){
-//            throw new CustomException(ErrorCode.PASSWORD_ERROR);
-//        }
-//        return new LoginResponseDto(findUser);
-//    }
     public JwtAuthResponse login(AccountRequest accountRequest) {
         User user = this.userRepository.findByEmail(accountRequest.getEmail())
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -84,17 +82,11 @@ public class UserService {
                         accountRequest.getEmail(),
                         accountRequest.getPassword())
         );
-//        log.info("SecurityContext에 Authentication 저장.");
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
         // 토큰 생성
         String accessToken = this.jwtProvider.generateToken(authentication);
         log.info("토큰 생성: {}", accessToken);
         return new JwtAuthResponse(AuthenticationScheme.BEARER.getName(), accessToken);
     }
-
-
-
-
 
     public LoginResponseDto getUser(Long userId){
         User findUser = userRepository.findByIdOrElseThrow(userId);
@@ -103,7 +95,7 @@ public class UserService {
 
     //회원 탈퇴
     @Transactional
-    public void resignUser(Long userId){
+    public ResignResponseDto resignUser(Long userId){
 
         // 인증 객체를 이용해 로그인 한 사용자의 정보를 가져온다.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -118,6 +110,7 @@ public class UserService {
         User findUser = userRepository.findByIdOrElseThrow(user.getId());
         findUser.setStatus(UserStatus.DEACTIVATED);
         userRepository.save(findUser);
+        return new ResignResponseDto(findUser);
     }
 
     private void validatePassword(String rawPassword, String encodedPassword)
@@ -125,6 +118,15 @@ public class UserService {
         boolean notValid = !this.passwordEncoder.matches(rawPassword, encodedPassword);
         if (notValid) {
             throw new CustomException(ErrorCode.PASSWORD_ERROR);
+        }
+    }
+
+    private void sendMessageFromSlack(String message) {
+        try {
+            slackService.sendMessage(message);
+            log.info("Message sent successfully!");
+        } catch (IOException | SlackApiException e) {
+            throw new CustomException(ErrorCode.MESSAGE_SENDING_ERROR);
         }
     }
 
