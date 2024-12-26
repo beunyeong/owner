@@ -21,11 +21,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private String commentTitle;
-
-    private String description;
-
-    private LocalDateTime expiredDate;
+    private String detail;
 
     public Comment() {}
 

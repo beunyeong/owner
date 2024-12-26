@@ -1,37 +1,43 @@
 package com.example.oner.service;
 
-import com.example.oner.config.PasswordEncoder;
 import com.example.oner.config.SignUpValidation;
-import com.example.oner.dto.User.LoginRequestDto;
-import com.example.oner.dto.User.LoginResponseDto;
-import com.example.oner.dto.User.UserRequestDto;
-import com.example.oner.dto.User.UserResponseDto;
+import com.example.oner.config.auth.UserDetailsImpl;
+import com.example.oner.dto.JwtAuthResponse;
+import com.example.oner.dto.User.*;
 import com.example.oner.entity.User;
-import com.example.oner.enums.UserRole;
 import com.example.oner.enums.UserStatus;
+
 import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.CustomException;
 import com.example.oner.repository.UserRepository;
+import com.example.oner.util.AuthenticationScheme;
+import com.example.oner.util.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.Objects;
-import java.util.Optional;
+
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "Security::AccountService")
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final SignUpValidation signUpValidation;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     //회원가입
     public UserResponseDto signUp(UserRequestDto requestDto){
@@ -50,23 +56,45 @@ public class UserService {
         }
 
         User user = new User(requestDto);
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(requestDto.getPassword()));
         User saveUser = userRepository.save(user);
 
         return new UserResponseDto(saveUser);
     }
 
     //로그인
-    public LoginResponseDto login(LoginRequestDto requestDto){
-
-        User findUser = userRepository.findUserByEmail(requestDto.getEmail())
+//    public LoginResponseDto login(LoginRequestDto requestDto){
+//
+//        User findUser = userRepository.findUserByEmail(requestDto.getEmail())
+//                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+//
+//        if (!bCryptPasswordEncoder.matches(requestDto.getPassword(),findUser.getPassword())){
+//            throw new CustomException(ErrorCode.PASSWORD_ERROR);
+//        }
+//        return new LoginResponseDto(findUser);
+//    }
+    public JwtAuthResponse login(AccountRequest accountRequest) {
+        User user = this.userRepository.findByEmail(accountRequest.getEmail())
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
+        this.validatePassword(accountRequest.getPassword(), user.getPassword());
 
-        if (!passwordEncoder.matches(requestDto.getPassword(),findUser.getPassword())){
-            throw new CustomException(ErrorCode.PASSWORD_ERROR);
-        }
-        return new LoginResponseDto(findUser);
+        // 사용자 인증 후 인증 객체를 저장
+        Authentication authentication = this.authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        accountRequest.getEmail(),
+                        accountRequest.getPassword())
+        );
+//        log.info("SecurityContext에 Authentication 저장.");
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 토큰 생성
+        String accessToken = this.jwtProvider.generateToken(authentication);
+        log.info("토큰 생성: {}", accessToken);
+        return new JwtAuthResponse(AuthenticationScheme.BEARER.getName(), accessToken);
     }
+
+
+
+
 
     public LoginResponseDto getUser(Long userId){
         User findUser = userRepository.findByIdOrElseThrow(userId);
@@ -75,18 +103,29 @@ public class UserService {
 
     //회원 탈퇴
     @Transactional
-    public void resignUser(Long userId , LoginResponseDto responseDto){
+    public void resignUser(Long userId){
+
+        // 인증 객체를 이용해 로그인 한 사용자의 정보를 가져온다.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = userDetails.getUser();
 
         //로그인유저와 탈퇴 요청유저가 일치하는지 확인
-        if (!Objects.equals(userId, responseDto.getUserId())) {
+        if (!Objects.equals(userId , user.getId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
         }
 
-        User findUser = userRepository.findByIdOrElseThrow(responseDto.getUserId());
+        User findUser = userRepository.findByIdOrElseThrow(user.getId());
         findUser.setStatus(UserStatus.DEACTIVATED);
         userRepository.save(findUser);
     }
 
-
+    private void validatePassword(String rawPassword, String encodedPassword)
+            throws IllegalArgumentException {
+        boolean notValid = !this.passwordEncoder.matches(rawPassword, encodedPassword);
+        if (notValid) {
+            throw new CustomException(ErrorCode.PASSWORD_ERROR);
+        }
+    }
 
 }
