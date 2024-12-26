@@ -1,6 +1,7 @@
 package com.example.oner.error.handler;
 
 import com.example.oner.error.exception.CustomException;
+import com.example.oner.error.exception.MemberNotAuthorizedException;
 import com.example.oner.error.response.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
+        return ErrorResponse.toResponseEntity(e.getErrorCode());
+    }
+
+    @ExceptionHandler(value = { MemberNotAuthorizedException.class })
+    protected ResponseEntity<ErrorResponse> handleMemberNotAuthorizedException(CustomException e) {
+        log.error("handleMemberNotAuthorizedException throw CustomException : {}", e.getErrorCode());
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
 
