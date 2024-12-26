@@ -40,8 +40,11 @@ public class Member extends BaseEntity {
     }
 
 
+    public void setWait(MemberWait wait) {
+        this.wait = wait;
+    }
 
-
-
-
+    public void setRole(MemberRole newRole) {
+        this.role = newRole;
+    }
 }

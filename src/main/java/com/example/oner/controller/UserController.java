@@ -1,18 +1,15 @@
 package com.example.oner.controller;
 
 
-import com.example.oner.config.Const;
-import com.example.oner.dto.User.LoginRequestDto;
-import com.example.oner.dto.User.LoginResponseDto;
-import com.example.oner.dto.User.UserRequestDto;
-import com.example.oner.dto.User.UserResponseDto;
+import com.example.oner.dto.JwtAuthResponse;
+import com.example.oner.dto.User.*;
+import com.example.oner.dto.common.CommonResponseBody;
 import com.example.oner.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +19,7 @@ public class UserController {
 
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     // 회원가입
     @PostMapping("/signup")
@@ -31,17 +29,13 @@ public class UserController {
 
     // 사용자 로그인
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> loginUser(
-            @Valid @RequestBody LoginRequestDto loginRequestDto, // 로그인 요청 데이터
-            HttpServletRequest servletRequest){
+    public ResponseEntity<CommonResponseBody<JwtAuthResponse>> login(
+            @Valid @RequestBody AccountRequest accountRequest) {
+        JwtAuthResponse authResponse = this.userService.login(accountRequest);
 
-        LoginResponseDto loginResponseDto = userService.login(loginRequestDto);
-        // 세션 생성 및 사용자 정보 저장
-        HttpSession httpSession = servletRequest.getSession();
-        httpSession.setAttribute(Const.LOGIN_USER, loginResponseDto);
-
-        return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
+        return ResponseEntity.ok(new CommonResponseBody<>("로그인 성공", authResponse));
     }
+
 
     //회원 조회
     @GetMapping("/{userId}")
@@ -49,15 +43,13 @@ public class UserController {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/resign/{userId}")
+    @DeleteMapping("/{userId}/resign")
     public ResponseEntity<String> deactivateUser(
-            @PathVariable Long userId,
-            HttpServletRequest servletRequest
+            @PathVariable Long userId
     ){
-        HttpSession session = servletRequest.getSession();
-        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-
-        userService.resignUser(userId , loginUser);
+        userService.resignUser(userId);
         return ResponseEntity.ok("회원 탈퇴되었습니다.");
     }
+
+
 }
