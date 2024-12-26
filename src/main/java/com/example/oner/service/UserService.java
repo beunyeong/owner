@@ -32,7 +32,6 @@ import java.util.Objects;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
     private final SignUpValidation signUpValidation;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PasswordEncoder passwordEncoder;
@@ -63,16 +62,6 @@ public class UserService {
     }
 
     //로그인
-//    public LoginResponseDto login(LoginRequestDto requestDto){
-//
-//        User findUser = userRepository.findUserByEmail(requestDto.getEmail())
-//                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
-//
-//        if (!bCryptPasswordEncoder.matches(requestDto.getPassword(),findUser.getPassword())){
-//            throw new CustomException(ErrorCode.PASSWORD_ERROR);
-//        }
-//        return new LoginResponseDto(findUser);
-//    }
     public JwtAuthResponse login(AccountRequest accountRequest) {
         User user = this.userRepository.findByEmail(accountRequest.getEmail())
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -84,17 +73,11 @@ public class UserService {
                         accountRequest.getEmail(),
                         accountRequest.getPassword())
         );
-//        log.info("SecurityContext에 Authentication 저장.");
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
         // 토큰 생성
         String accessToken = this.jwtProvider.generateToken(authentication);
         log.info("토큰 생성: {}", accessToken);
         return new JwtAuthResponse(AuthenticationScheme.BEARER.getName(), accessToken);
     }
-
-
-
-
 
     public LoginResponseDto getUser(Long userId){
         User findUser = userRepository.findByIdOrElseThrow(userId);
