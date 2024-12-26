@@ -39,6 +39,10 @@ dependencies {
 
     implementation 'at.favre.lib:bcrypt:0.10.2'
 
+    //slack api
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.3'
+    implementation 'com.slack.api:slack-api-client:1.43.0'
+
     // JWT
     compileOnly 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'

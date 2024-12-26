@@ -44,11 +44,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/resign")
-    public ResponseEntity<String> deactivateUser(
+    public ResponseEntity<ResignResponseDto> deactivateUser(
             @PathVariable Long userId
     ){
-        userService.resignUser(userId);
-        return ResponseEntity.ok("회원 탈퇴되었습니다.");
+        return new ResponseEntity<>(userService.resignUser(userId) , HttpStatus.OK);
     }
 
 
