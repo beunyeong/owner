@@ -1,11 +1,18 @@
 package com.example.oner.entity;
 
-import com.example.oner.config.PasswordEncoder;
 import com.example.oner.dto.User.UserRequestDto;
 import com.example.oner.enums.UserRole;
 import com.example.oner.enums.UserStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,7 +26,7 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -34,7 +41,7 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private UserStatus userStatus = UserStatus.ACTIVE;
 
-    public User() {}
+    public User(){}
 
     public User(UserRequestDto requestDto){
         this.name = requestDto.getName();
