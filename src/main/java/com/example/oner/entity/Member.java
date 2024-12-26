@@ -32,16 +32,19 @@ public class Member extends BaseEntity {
 
     public Member(){}
 
-    public Member(User user, Workspace workspace, MemberRole role, MemberWait wait) {
+    public Member(User user, Workspace workspace, MemberRole role) {
         this.user = user;
         this.workspace = workspace;
         this.role = role;
-        this.wait = wait;
+        this.wait = MemberWait.WAIT;
     }
 
 
+    public void setWait(MemberWait wait) {
+        this.wait = wait;
+    }
 
-
-
-
+    public void setRole(MemberRole newRole) {
+        this.role = newRole;
+    }
 }

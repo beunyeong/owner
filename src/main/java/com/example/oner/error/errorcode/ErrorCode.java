@@ -12,6 +12,7 @@ public enum ErrorCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     EMAIL_FORM_ERROR(BAD_REQUEST, "이메일 형식 에러"),
     PASSWORD_PATTERN_ERROR(BAD_REQUEST, "비밀번호 패턴 에러"),
+    INVALID_ROLE(BAD_REQUEST, "잘못된 역할입니다."),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
