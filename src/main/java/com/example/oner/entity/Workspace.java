@@ -25,6 +25,12 @@ public class Workspace extends BaseEntity {
 
     private String description;
 
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Member> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
+
     public Workspace() {}
 
     public Workspace(User user, String name, String description) {
@@ -33,5 +39,9 @@ public class Workspace extends BaseEntity {
         this.description = description;
     }
 
+    public void updateWorkspace(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
 }

@@ -64,4 +64,7 @@ public class User extends BaseEntity{
         this.password = encodePassword;
     }
 
+    public boolean isAdmin() {
+        return this.userRole == UserRole.ADMIN;
+    }
 }
