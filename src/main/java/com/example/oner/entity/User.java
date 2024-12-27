@@ -41,6 +41,9 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private UserStatus userStatus = UserStatus.ACTIVE;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = true)
+    private Member member;
+
     public User(){}
 
     public User(UserRequestDto requestDto){
@@ -67,4 +70,9 @@ public class User extends BaseEntity{
     public boolean isAdmin() {
         return this.userRole == UserRole.ADMIN;
     }
+
+    public Member getMember() {
+        return this.member;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.oner.config.auth;
 
+import com.example.oner.entity.Member;
 import com.example.oner.entity.User;
 import com.example.oner.enums.UserRole;
 import lombok.Getter;
@@ -29,6 +30,15 @@ public class UserDetailsImpl implements UserDetails {
    * User entity.
    */
   private final User user;
+
+  public Member getMember() {
+    Member member = this.user.getMember();
+    if (member == null) {
+      log.error("사용자와 연관된 Member 엔티티가 없습니다. User ID:{}",this.user.getId());
+      throw new IllegalStateException("사용자와 연관된 Member 엔티티가 없습니다.");
+    }
+    return member;
+  }
 
   /**
    * 계정의 권한 리스트를 리턴.
