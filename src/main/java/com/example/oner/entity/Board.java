@@ -2,6 +2,8 @@ package com.example.oner.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +26,9 @@ public class Board extends BaseEntity {
     private String backgroundColor;
 
     private String backgroundImageUrl;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListEntity> lists = new ArrayList<>();   // 보드 내부의 리스트
 
     public Board(){}
 

@@ -5,6 +5,7 @@ import com.example.oner.enums.MemberRole;
 import com.example.oner.enums.MemberWait;
 import jakarta.persistence.*;
 import lombok.Getter;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,11 +17,11 @@ public class Member extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workspace_id")
+    @JoinColumn(name = "workspace_id", referencedColumnName = "id")
     private Workspace workspace;
 
     @Column(nullable = false)
@@ -29,6 +30,9 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private MemberWait wait;
+
+    @ManyToMany(mappedBy = "members")
+    private List<Workspace> workspaces;
 
     public Member(){}
 
@@ -47,4 +51,18 @@ public class Member extends BaseEntity {
     public void setRole(MemberRole newRole) {
         this.role = newRole;
     }
+
+    // 멤버가 워크스페이스에 속해있는지 확인
+    public boolean isMemberOf(Workspace workspace) {
+        return this.workspace != null && this.workspace.getId().equals(workspace.getId());
+    }
+
+    public boolean hasPermission(MemberRole requiredRole) {
+        if (requiredRole == MemberRole.READ) {
+            return true; // 읽기 권한은 기본 제공
+        }
+        return this.role.equals(requiredRole);
+    }
+
 }
+
