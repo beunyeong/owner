@@ -73,6 +73,8 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.576'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
 
 }
 

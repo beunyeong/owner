@@ -15,7 +15,7 @@ public class Card extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "list_id")
-    private ListEntity lists;
+    private ListEntity list;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -37,8 +37,8 @@ public class Card extends BaseEntity {
         this.views = 0;
     }
 
-    public Card(ListEntity lists, Member member, String cardTitle, String description, LocalDateTime dueDate) {
-        this.lists = lists;
+    public Card(ListEntity list, Member member, String cardTitle, String description, LocalDateTime dueDate) {
+        this.list = list;
         this.member = member;
         this.cardTitle = cardTitle;
         this.description = description;

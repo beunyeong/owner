@@ -31,9 +31,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberWait wait;
 
-    @ManyToMany(mappedBy = "members")
-    private List<Workspace> workspaces;
-
     public Member(){}
 
     public Member(User user, Workspace workspace, MemberRole role) {
