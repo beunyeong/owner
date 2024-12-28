@@ -24,56 +24,46 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.security:spring-security-test'
 
+    // BCrypt
     implementation 'at.favre.lib:bcrypt:0.10.2'
 
     //slack api
     implementation 'org.springframework.boot:spring-boot-starter-web:3.3.3'
     implementation 'com.slack.api:slack-api-client:1.43.0'
+    implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+
 
     // JWT
     compileOnly 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Thymeleaf Security Extras
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    testImplementation 'org.springframework.security:spring-security-test'
 
-    implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+    // AWS S3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.576'
 
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
-    //slack api
-    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.3'
-    implementation 'com.slack.api:slack-api-client:1.43.0'
-
-    // JWT
-    compileOnly 'io.jsonwebtoken:jjwt-api:0.12.3'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    testImplementation 'org.springframework.security:spring-security-test'
-
-    implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.576'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 
 }
@@ -81,4 +71,5 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 
