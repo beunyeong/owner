@@ -33,7 +33,6 @@ import java.util.function.Function;
  * @since 1.0
  */
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class JwtProvider {
 
@@ -54,6 +53,10 @@ public class JwtProvider {
    * Member repository.
    */
   private final UserRepository userRepository;
+
+  public JwtProvider(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   /**
    * <p>토큰 생성 후 리턴.</p>
