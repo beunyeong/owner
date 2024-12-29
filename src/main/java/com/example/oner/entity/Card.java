@@ -31,7 +31,10 @@ public class Card extends BaseEntity {
 
     private boolean modified;
 
-    private Long beforeId;
+    private Long beforeListId;
+
+    private Long beforeMemberId;
+
 
     public Card() {
         this.views = 0;
@@ -45,9 +48,28 @@ public class Card extends BaseEntity {
         this.dueDate = dueDate;
         this.views = 0;
         this.modified = false;
-        this.beforeId = null;
+        this.beforeMemberId = null;
+        this.beforeListId = null;
+    }
+
+    public void updateCard(ListEntity newList, Member newMember, String newTitle, String newDescription, LocalDateTime newDueDate) {
+
+        if (!this.list.getId().equals(newList.getId())) {
+            this.beforeListId = this.list.getId();
+            this.list = newList;
+        }
+        if (!this.member.getId().equals(newMember.getId())) {
+            this.beforeMemberId = this.member.getId();
+            this.member = newMember;
+        }
+        this.cardTitle = newTitle;
+        this.description = newDescription;
+        this.dueDate = newDueDate;
+        this.modified = true;
     }
 
 
-
+    public void plusViews(long l) {
+        this.views += l;
+    }
 }

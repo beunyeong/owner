@@ -42,8 +42,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         }
         return members;
     }
-
-
-
+    boolean existsByUserAndWorkspaceId(User user, Long workspaceId);
 
 }

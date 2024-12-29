@@ -24,25 +24,19 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.springframework.security:spring-security-test'
 
-    // BCrypt
     implementation 'at.favre.lib:bcrypt:0.10.2'
 
     //slack api
@@ -56,14 +50,16 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-    // Thymeleaf Security Extras
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
     // AWS S3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.576'
-
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
-
+    implementation group: 'software.amazon.awssdk', name: 'sqs', version: '2.29.42'
+    implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+    testImplementation group: 'software.amazon.awssdk', name: 's3', version: '2.29.42'
+    implementation group: 'software.amazon.awscdk', name: 's3', version: '1.204.0'
 
 
 }
@@ -71,5 +67,3 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-

@@ -40,4 +40,5 @@ out/
 src/main/resources/application.properties
 
 ### env ###
+src/main/resources/application.env
 src/main/resources/.env
