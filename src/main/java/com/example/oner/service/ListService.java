@@ -45,6 +45,13 @@ public class ListService {
         if(!member.hasPermission(MemberRole.BOARD)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
+
+        // position_list 중복 검증
+        boolean ispositionTaken = listRepository.existsByBoardIdAndPositionList(board.getId(), requestDto.getPositionList());
+        if(ispositionTaken) {
+            throw new CustomException(ErrorCode.DUPLICATE_POSITION_LIST);
+        }
+
         // 리스트 생성
         ListEntity list = new ListEntity(board, requestDto.getListTitle(), requestDto.getPositionList());
         listRepository.save(list);

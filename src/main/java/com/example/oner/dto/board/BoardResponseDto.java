@@ -5,6 +5,7 @@ import com.example.oner.entity.Board;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class BoardResponseDto {
@@ -48,7 +49,11 @@ public class BoardResponseDto {
         this.backgroundImageUrl = board.getBackgroundImageUrl();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
-        this.lists = null; // 기본값으로 설정
+        this.lists = board.getLists()
+                .stream()
+                .map(ListResponseDto::new)
+                .collect(Collectors.toList());
+
     }
 
 }
