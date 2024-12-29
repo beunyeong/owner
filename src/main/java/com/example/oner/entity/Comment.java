@@ -2,7 +2,6 @@ package com.example.oner.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,5 +23,15 @@ public class Comment extends BaseEntity {
     private String detail;
 
     public Comment() {}
+
+    public Comment(Card card , Member member ,String detail){
+        this.card = card;
+        this.member = member;
+        this.detail = detail;
+    }
+
+    public void updateDetail(String detail){
+        this.detail = detail;
+    }
 
 }

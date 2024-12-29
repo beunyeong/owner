@@ -3,7 +3,7 @@ package com.example.oner.service;
 import com.example.oner.config.SignUpValidation;
 import com.example.oner.config.auth.UserDetailsImpl;
 import com.example.oner.dto.JwtAuthResponse;
-import com.example.oner.dto.User.*;
+import com.example.oner.dto.user.*;
 import com.example.oner.entity.User;
 import com.example.oner.enums.UserStatus;
 

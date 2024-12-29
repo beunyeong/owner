@@ -1,7 +1,6 @@
-package com.example.oner.dto.User;
+package com.example.oner.dto.user;
 
 import com.example.oner.entity.User;
-import com.example.oner.enums.UserRole;
 import com.example.oner.enums.UserStatus;
 import lombok.Getter;
 

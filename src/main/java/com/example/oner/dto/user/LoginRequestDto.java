@@ -1,4 +1,4 @@
-package com.example.oner.dto.User;
+package com.example.oner.dto.user;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;

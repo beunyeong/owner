@@ -3,7 +3,6 @@ package com.example.oner.service;
 
 import com.example.oner.config.auth.UserDetailsImpl;
 import com.example.oner.dto.Member.*;
-import com.example.oner.dto.User.LoginResponseDto;
 import com.example.oner.entity.Member;
 import com.example.oner.entity.User;
 import com.example.oner.entity.Workspace;
@@ -15,14 +14,11 @@ import com.example.oner.repository.MemberRepository;
 import com.example.oner.repository.UserRepository;
 import com.example.oner.repository.WorkspaceRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 

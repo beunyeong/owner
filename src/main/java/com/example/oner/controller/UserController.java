@@ -2,7 +2,7 @@ package com.example.oner.controller;
 
 
 import com.example.oner.dto.JwtAuthResponse;
-import com.example.oner.dto.User.*;
+import com.example.oner.dto.user.*;
 import com.example.oner.dto.common.CommonResponseBody;
 import com.example.oner.service.UserService;
 import jakarta.validation.Valid;
@@ -19,7 +19,6 @@ public class UserController {
 
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
 
     // 회원가입
     @PostMapping("/signup")
