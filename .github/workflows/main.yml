@@ -73,5 +73,5 @@ jobs:
           --application-name "onerproject" \
           --deployment-group-name "onerproject-group" \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=deploy-onerproject,bundleType=zip,key=Oner.jar \
+          --s3-location bucket=onerproject,bundleType=zip,key=Oner.jar \
           --region ap-northeast-2
