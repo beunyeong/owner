@@ -33,6 +33,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         return findByUserAndWorkspace(user, workspace).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
+    @Query("SELECT m FROM Member m WHERE m.workspace.id = :workspaceId")
+    List<Member> getMembersById(Long workspaceId);
+
     @Query("SELECT m FROM Member m JOIN FETCH m.workspace WHERE m.user = :user")
     List<Member> findAllByUser(@Param("user") User user);
     default List<Member> findByAllUserOrElseThrow(User user) {

@@ -86,20 +86,18 @@ public class MemberService {
         if (!isWorkspaceMember) {
             throw new MemberNotAuthorizedException();
         }
-        List<Member> workspaceMembers = workspaceRepository.getMembersById(workspaceId);
+        List<Member> workspaceMembers =memberRepository.getMembersById(workspaceId);
+        System.out.println("멤버 수: " + workspaceMembers.size());
         List<MemberDetailDto> memberDetailDtos = new ArrayList<>();
 
         for (Member member : workspaceMembers) {
-            // Member 객체에서 User 객체를 가져옴
             User workspaceUser = member.getUser();
 
-            // 멤버의 이름, 사용자 ID, 역할 정보를 가져와서 MemberDetailDto 객체 생성
             MemberDetailDto memberDetailDto = new MemberDetailDto(
-                    workspaceUser.getName(),         // User의 이름
-                    workspaceUser.getId(),           // User의 ID
-                    member.getRole()        // Member의 역할
+                    workspaceUser.getName(),
+                    workspaceUser.getId(),
+                    member.getRole()
             );
-            // 생성된 객체를 리스트에 추가
             memberDetailDtos.add(memberDetailDto);
         }
         MemberResponseDto memberResponseDto = new MemberResponseDto(workspaceId, memberDetailDtos);
@@ -217,7 +215,7 @@ public class MemberService {
         }
 
         try {
-            MemberRole newRole = MemberRole.valueOf(String.valueOf(updateMemberRoleRequestDto.getRole()));
+            MemberRole newRole = updateMemberRoleRequestDto.getRole();
             member.setRole(newRole);
             memberRepository.save(member);
         } catch (IllegalArgumentException e) {
