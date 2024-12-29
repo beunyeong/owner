@@ -14,6 +14,7 @@ public enum ErrorCode {
     PASSWORD_PATTERN_ERROR(BAD_REQUEST, "비밀번호 패턴 에러"),
     INVALID_ROLE(BAD_REQUEST, "잘못된 역할입니다."),
     MESSAGE_SENDING_ERROR(BAD_REQUEST,"message send error"),
+    DUPLICATE_POSITION_LIST(BAD_REQUEST, "중복된 position 입니다."),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
