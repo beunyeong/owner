@@ -67,7 +67,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws deploy create-deployment \
-          --application-name coinTalk[oneprjoect] \
+          --application-name coinTalk[onerprjoect] \
           --deployment-group-name coinTalk-group[onerproject-group] \
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=cointalk-deploy[onerproject],bundleType=zip,key=[Oner].zip[Oner.jar] \ 
