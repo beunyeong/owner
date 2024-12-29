@@ -1,18 +1,10 @@
 package com.example.oner.entity;
 
-import com.example.oner.dto.User.UserRequestDto;
+import com.example.oner.dto.user.UserRequestDto;
 import com.example.oner.enums.UserRole;
 import com.example.oner.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Getter

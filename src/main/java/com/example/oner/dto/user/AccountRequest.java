@@ -1,4 +1,4 @@
-package com.example.oner.dto.User;
+package com.example.oner.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

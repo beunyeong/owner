@@ -32,6 +32,8 @@ public enum ErrorCode {
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
+    MEMBER_NOT_FOUND(NOT_FOUND, "멤버 정보를 찾을 수 없습니다."),
+    CARD_NOT_FOUND(NOT_FOUND, "카드 정보를 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "댓글 정보를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(NOT_FOUND, "보드 정보를 찾을 수 없습니다."),
     LIST_NOT_FOUND(NOT_FOUND, "리스트 정보를 찾을 수 없습니다."),
