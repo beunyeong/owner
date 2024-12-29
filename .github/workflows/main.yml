@@ -27,4 +27,25 @@ jobs:
     - name: Build with Gradle
       # run: ./gradlew clean build
       run: ./gradlew clean build -x test # 테스트 Skip
-출처: https://kang-james.tistory.com/entry/CICD-Github-Action-AWS로-Java-자동-빌드배포하기 [내 꿈을 JAVA:티스토리]
+
+      # 디렉토리 생성
+    - name: Make Directory
+      run: mkdir -p deploy
+
+      # Jar 파일 복사
+    - name: Copy Jar
+      run: cp ./build/libs/*.jar ./deploy
+
+    - name: Make zip file
+      run: zip -r ./sebadog.zip ./deploy
+      shell: bash
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./sebadog.zip s3://$S3_BUCKET_NAME/
