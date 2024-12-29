@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source: /
+  - source: /Oner.zip
     destination: /home/ubuntu/app/
     overwrite: yes
 
