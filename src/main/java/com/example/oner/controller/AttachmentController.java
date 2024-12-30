@@ -1,9 +1,11 @@
 package com.example.oner.controller;
 
+import com.example.oner.config.auth.UserDetailsImpl;
 import com.example.oner.dto.Attachment.AttachmentResponseDto;
 import com.example.oner.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,9 +22,10 @@ public class AttachmentController {
     @PostMapping
     public ResponseEntity<AttachmentResponseDto> addAttachment(
             @PathVariable Long cardId,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
-        return attachmentService.addAttachment(cardId, file);
+        return attachmentService.addAttachment(cardId, file, userDetails.getUser());
     }
 
     @DeleteMapping("{attachmentId}")

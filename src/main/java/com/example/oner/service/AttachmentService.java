@@ -37,10 +37,7 @@ public class AttachmentService {
         this.memberRepository = memberRepository;
     }
 
-    public ResponseEntity<AttachmentResponseDto> addAttachment(Long cardId, MultipartFile file) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
+    public ResponseEntity<AttachmentResponseDto> addAttachment(Long cardId, MultipartFile file, User user) {
 
         if (!isValidFileType(file.getContentType())) {
             throw new IllegalArgumentException("지원되지 않는 파일 형식입니다.");

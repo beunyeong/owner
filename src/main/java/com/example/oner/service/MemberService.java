@@ -36,14 +36,11 @@ public class MemberService {
     //받아온 userid는 멤버에 초대될 대상의 id값
     public ResponseEntity<MemberCreateResponseDto> createMember( Long userId, MemberCreateRequestDto memberCreateRequestDto, User user  ) {
 
-
-
         Long workspaceId = memberCreateRequestDto.getWorkspaceId();
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new EntityNotFoundException("해당하는 워크스페이스가 없습니다."));
 
         //타겟 유저의 유무를 검사
         User targetUser = userRepository.findByIdOrElseThrow(userId);
-
 
         //타켓유저가 해당 워크스페이스의 멤버인지 확인하여 검사하는 부분
         Optional<Member> existingMember = memberRepository.findByUserIdAndWorkspaceId(userId, workspaceId);
