@@ -202,7 +202,7 @@ public class CardService {
                 .and(CardSpecification.hasDescription(request.getDescription()))
                 .and(CardSpecification.hasDueDateBetween(request.getDueDateFrom(), request.getDueDateTo()))
                 .and(CardSpecification.belongsToList(request.getListId()));
-        //   .and(CardSpecification.assignedToMember(request.getMemberId()))
+
 
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("createdAt").descending());
         return cardRepository.findAll(specification, pageable).map(CardDetailResponseDto::new);
