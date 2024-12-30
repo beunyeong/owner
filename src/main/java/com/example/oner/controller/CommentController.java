@@ -32,4 +32,10 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> modifyComment(@RequestBody CommentUpdateRequestDto requestDto){
         return new ResponseEntity<>(commentService.modifyComment(requestDto),HttpStatus.OK);
     }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId){
+        commentService.deleteComment(commentId);
+        return new ResponseEntity<>("삭제되었습니다" , HttpStatus.OK);
+    }
 }

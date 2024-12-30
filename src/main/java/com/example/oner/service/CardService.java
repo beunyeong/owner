@@ -80,7 +80,7 @@ public class CardService {
 
         Workspace workspace = card.getList().getBoard().getWorkspace();
 
-        Member member =  memberRepository.findByUserAndWorkspace(user, workspace)
+        Member member = (Member) memberRepository.findByUserAndWorkspace(user, workspace)
                 .orElseThrow(MemberNotAuthorizedException::new);
 
         if (member.getRole() == MemberRole.READ) {
@@ -101,10 +101,9 @@ public class CardService {
         User user = userDetails.getUser();
 
         Long workspaceId = cardRequestDto.getWorkspaceId();
-        log.error("워크스페이스ID:{}",workspaceId);
 
         boolean isMember = memberRepository.existsByUserIdAndWorkspaceId(user.getId(), workspaceId);
-        log.error("워크스페이스 ID: {}, 사용자 ID: {} - 멤버 확인 실패", workspaceId, user.getId());
+
 
         if (!isMember) {
             throw new EntityNotFoundException("워크스페이스에 속한 멤버가 아닙니다.");
@@ -139,7 +138,7 @@ public class CardService {
 
         Workspace workspace = card.getList().getBoard().getWorkspace();
 
-        Member member = memberRepository.findByUserAndWorkspace(user, workspace)
+        Member member = (Member) memberRepository.findByUserAndWorkspace(user, workspace)
                 .orElseThrow(MemberNotAuthorizedException::new);
 
         if (member.getRole() == MemberRole.READ) {
