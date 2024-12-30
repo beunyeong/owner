@@ -127,7 +127,7 @@ public class WorkspaceService {
         if (!memberRepository.existsByUserAndWorkspace(user, workspace)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
-
-        workspaceRepository.delete(workspace);
+        memberRepository.deleteByWorkspaceId(workspaceId);
+        workspaceRepository.deleteById(workspaceId);
     }
 }
