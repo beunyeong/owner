@@ -6,6 +6,7 @@ import com.example.oner.dto.board.BoardRequestDto;
 import com.example.oner.dto.board.BoardResponseDto;
 import com.example.oner.entity.Board;
 import com.example.oner.entity.Member;
+import com.example.oner.entity.User;
 import com.example.oner.entity.Workspace;
 import com.example.oner.enums.MemberRole;
 import com.example.oner.error.errorcode.ErrorCode;
@@ -37,7 +38,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();      // 로그인 유저 조회
+        Member member = user.getMember();   // 로그인한 유저의 첫번째 멤버 조회
 
         // 워크스페이스 조회
         Workspace workspace = workspaceRepository.findByIdAndMembersContaining(requestDto.getWorkspaceId(), member)
@@ -66,7 +68,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 워크스페이스 조회
         List<Workspace> workspaces = workspaceRepository.findAllByMembersContaining(member);
@@ -84,7 +87,7 @@ public class BoardService {
                         board.getBackgroundImageUrl(),
                         board.getCreatedAt(),
                         board.getUpdatedAt()))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // 3. 보드 단건 조회
@@ -92,7 +95,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회 및 권한 확인
         Board board = boardRepository.findById(boardId)
@@ -110,7 +114,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회 및 권한 확인
         Board board = boardRepository.findById(boardId)
@@ -131,7 +136,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회 및 권한 확인
         Board board = boardRepository.findById(boardId)

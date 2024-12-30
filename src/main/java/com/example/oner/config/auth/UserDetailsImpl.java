@@ -31,15 +31,6 @@ public class UserDetailsImpl implements UserDetails {
    */
   private final User user;
 
-  public Member getMember() {
-    Member member = this.user.getMember();
-    if (member == null) {
-      log.error("사용자와 연관된 Member 엔티티가 없습니다. User ID:{}",this.user.getId());
-      throw new IllegalStateException("사용자와 연관된 Member 엔티티가 없습니다.");
-    }
-    return member;
-  }
-
   /**
    * 계정의 권한 리스트를 리턴.
    *
