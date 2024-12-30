@@ -38,12 +38,17 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();      // 로그인 유저 조회
-        Member member = user.getMember();   // 로그인한 유저의 첫번째 멤버 조회
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 워크스페이스 조회
         Workspace workspace = workspaceRepository.findByIdAndMembersContaining(requestDto.getWorkspaceId(), member)
                 .orElseThrow(() -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND));
+
+        // 보드 제목이 비어 있는 경우
+        if (requestDto.getTitle() == null || requestDto.getTitle().trim().isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST);
+        }
 
         // 멤버 권한 확인
         if (!member.hasPermission(MemberRole.BOARD)) {

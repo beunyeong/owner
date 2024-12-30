@@ -15,6 +15,7 @@ import com.example.oner.error.exception.CustomException;
 import com.example.oner.repository.CardRepository;
 import com.example.oner.repository.CommentRepository;
 import com.example.oner.repository.MemberRepository;
+import com.slack.api.methods.SlackApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Service
@@ -32,18 +34,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final CardRepository cardRepository;
-
-
+    private final SlackService slackService;
 
     // 댓글 생성
-    public CommentResponseDto createComment(CommentRequestDto requestDto){
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User loginUser = userDetails.getUser();
+    public CommentResponseDto createComment(CommentRequestDto requestDto , User loginUser){
 
         Member findMember = memberRepository.findByUserIdAndWorkspaceId(
-                loginUser.getId() , requestDto.getWorkspaceId())
+                        loginUser.getId() , requestDto.getWorkspaceId())
                 .orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // member 권한 확인
@@ -56,6 +53,10 @@ public class CommentService {
 
         Comment comment = new Comment(findCard , findMember , requestDto.getDetail());
         commentRepository.save(comment);
+
+        String message = loginUser.getName()+"님께서 댓글을 작성했습니다.✒️";
+        sendMessageFromSlack(message);
+
         return new CommentResponseDto(comment);
     }
 
@@ -67,11 +68,7 @@ public class CommentService {
 
     //댓글 수정
     @Transactional
-    public CommentResponseDto modifyComment(CommentUpdateRequestDto requestDto){
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User loginUser = userDetails.getUser();
+    public CommentResponseDto modifyComment(CommentUpdateRequestDto requestDto , User loginUser){
 
         Comment findComment = commentRepository.findByIdOrElseThrow(requestDto.getCommentId());
 
@@ -84,11 +81,8 @@ public class CommentService {
         return new CommentResponseDto(findComment);
     }
 
-    public void deleteComment(Long commentId){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User loginUser = userDetails.getUser();
+    public void deleteComment(Long commentId , User loginUser){
 
         Comment findComment = commentRepository.findByIdOrElseThrow(commentId);
 
@@ -96,9 +90,16 @@ public class CommentService {
         if (!Objects.equals(loginUser.getId(), findComment.getMember().getUser().getId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
         }
-
         commentRepository.delete(findComment);
+    }
 
+    private void sendMessageFromSlack(String message) {
+        try {
+            slackService.sendMessage(message);
+            log.info("Message sent successfully!");
+        } catch (IOException | SlackApiException e) {
+            throw new CustomException(ErrorCode.MESSAGE_SENDING_ERROR);
+        }
     }
 
 }

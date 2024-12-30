@@ -16,6 +16,7 @@ public enum ErrorCode {
     MESSAGE_SENDING_ERROR(BAD_REQUEST,"message send error"),
     DUPLICATE_POSITION_LIST(BAD_REQUEST, "중복된 position 입니다."),
     INVITED_MEMBER(BAD_REQUEST, "멤버로 초대된 유저입니다."),
+    INVALID_REQUEST(BAD_REQUEST, "[필수값 누락] 보드 제목을 입력해주세요."),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
