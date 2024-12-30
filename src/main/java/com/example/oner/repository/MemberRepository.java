@@ -19,6 +19,9 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+    @Query("SELECT m FROM Member m WHERE m.user.id = :userId AND m.workspace.id = :workspaceId AND m.role = 'BOARD'")
+    Optional<Member> findByUserIdAndWorkspaceIdAndRole(@Param("userId") Long userId, @Param("workspaceId") Long workspaceId);
+
     Optional<Member> findByUserIdAndWorkspaceId(Long userId, Long workspaceId);
 
     Optional<Object> findByUserIdAndWorkspaceIdAndWait(Long id, Long workspaceId, MemberWait memberWait);
