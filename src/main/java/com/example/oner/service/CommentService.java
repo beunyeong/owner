@@ -33,6 +33,8 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final CardRepository cardRepository;
 
+
+
     // 댓글 생성
     public CommentResponseDto createComment(CommentRequestDto requestDto){
 
@@ -43,6 +45,7 @@ public class CommentService {
         Member findMember = memberRepository.findByUserIdAndWorkspaceId(
                 loginUser.getId() , requestDto.getWorkspaceId())
                 .orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
         // member 권한 확인
         if (findMember.getRole() == MemberRole.READ){
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
@@ -79,6 +82,23 @@ public class CommentService {
 
         findComment.updateDetail(requestDto.getDetail());
         return new CommentResponseDto(findComment);
+    }
+
+    public void deleteComment(Long commentId){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User loginUser = userDetails.getUser();
+
+        Comment findComment = commentRepository.findByIdOrElseThrow(commentId);
+
+        // 해당 댓글의 작성자인지 확인
+        if (!Objects.equals(loginUser.getId(), findComment.getMember().getUser().getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
+        commentRepository.delete(findComment);
+
     }
 
 }
