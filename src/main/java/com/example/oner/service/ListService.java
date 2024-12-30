@@ -12,6 +12,7 @@ import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.CustomException;
 import com.example.oner.repository.BoardRepository;
 import com.example.oner.repository.ListRepository;
+import com.example.oner.repository.MemberRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,13 @@ public class ListService {
 
     private final ListRepository listRepository;
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     public ListService(ListRepository listRepository,
-                       BoardRepository boardRepository) {
+                       BoardRepository boardRepository, MemberRepository memberRepository) {
         this.listRepository = listRepository;
         this.boardRepository = boardRepository;
+        this.memberRepository = memberRepository;
     }
 
     // 1. 리스트 생성
@@ -37,6 +40,15 @@ public class ListService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userDetails.getUser();
         Member member = user.getMember();
+
+        // 특정 멤버 불러오기
+        Member findMember = memberRepository.findByUserIdAndWorkspaceIdAndRole(user.getId(),requestDto.getWorkspaceId())
+                .orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        //  특정 멤버 role 권한 확인
+        if (!findMember.getRole().equals(MemberRole.BOARD)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
 
         // 보드 조회
         Board board = boardRepository.findById(requestDto.getBoardId())
