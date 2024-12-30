@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'at.favre.lib:bcrypt:0.10.2'
+
+    //slack api
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.3'
+    implementation 'com.slack.api:slack-api-client:1.43.0'
+    implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+
+
+    // JWT
+    compileOnly 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // AWS S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.576'
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+    implementation group: 'software.amazon.awssdk', name: 'sqs', version: '2.29.42'
+    implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+    testImplementation group: 'software.amazon.awssdk', name: 's3', version: '2.29.42'
+    implementation group: 'software.amazon.awscdk', name: 's3', version: '1.204.0'
+
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
