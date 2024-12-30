@@ -27,20 +27,6 @@ public class BoardResponseDto {
     private List<ListResponseDto> lists;
 
 
-    public BoardResponseDto(Long id, String title, Long workspaceId,
-                            String backgroundColor, String backgroundImageUrl,
-                            LocalDateTime createdAt, LocalDateTime updatedAt,
-                            List<ListResponseDto> lists) {
-        this.id = id;
-        this.title = title;
-        this.workspaceId = workspaceId;
-        this.backgroundColor = backgroundColor;
-        this.backgroundImageUrl = backgroundImageUrl;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.lists = lists;
-    }
-
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getBoardTitle();

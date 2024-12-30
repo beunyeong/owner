@@ -1,5 +1,6 @@
 package com.example.oner.controller;
 
+import com.example.oner.dto.board.BoardGetResponseDto;
 import com.example.oner.dto.board.BoardRequestDto;
 import com.example.oner.dto.board.BoardResponseDto;
 import com.example.oner.service.BoardService;
@@ -28,9 +29,9 @@ public class BoardController {
 
     // 2. 보드 전체 조회
     @GetMapping
-    public ResponseEntity<List<BoardResponseDto>> getBoards() {
-        List<BoardResponseDto> boards = boardService.getBoards();
-        return ResponseEntity.status(HttpStatus.OK).body(boards);
+    public ResponseEntity<List<BoardGetResponseDto>> getBoards() {
+        List<BoardGetResponseDto> response = boardService.getBoards();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 3. 보드 단건 조회

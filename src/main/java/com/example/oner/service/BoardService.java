@@ -1,6 +1,7 @@
 package com.example.oner.service;
 
 import com.example.oner.config.auth.UserDetailsImpl;
+import com.example.oner.dto.board.BoardGetResponseDto;
 import com.example.oner.dto.board.BoardRequestDto;
 import com.example.oner.dto.board.BoardResponseDto;
 import com.example.oner.entity.Board;
@@ -61,7 +62,7 @@ public class BoardService {
     }
 
     // 2. 보드 전체 조회
-    public List<BoardResponseDto> getBoards() {
+    public List<BoardGetResponseDto> getBoards() {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -75,8 +76,15 @@ public class BoardService {
 
         return boardRepository.findAllByWorkspaceIn(workspaces)
                 .stream()
-                .map(BoardResponseDto::new)
-                .collect(Collectors.toList());
+                .map(board -> new BoardGetResponseDto(
+                        board.getId(),
+                        board.getBoardTitle(),
+                        board.getWorkspace().getId(),
+                        board.getBackgroundColor(),
+                        board.getBackgroundImageUrl(),
+                        board.getCreatedAt(),
+                        board.getUpdatedAt()))
+                .toList();
     }
 
     // 3. 보드 단건 조회
