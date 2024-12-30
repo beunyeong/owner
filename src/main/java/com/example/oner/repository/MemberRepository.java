@@ -8,6 +8,7 @@ import com.example.oner.enums.MemberWait;
 import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.CustomException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -49,4 +50,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByUserIdAndWorkspaceId(Long id, Long workspaceId);
 
+    @Modifying
+    @Query("DELETE FROM Member m WHERE m.workspace.id = :workspaceId")
+    void deleteByWorkspaceId(@Param("workspaceId") Long workspaceId);
 }
