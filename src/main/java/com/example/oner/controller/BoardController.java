@@ -29,9 +29,10 @@ public class BoardController {
 
     // 2. 보드 전체 조회
     @GetMapping
-    public ResponseEntity<List<BoardGetResponseDto>> getBoards() {
+    public ResponseEntity<List<BoardGetResponseDto>> getBoard() {
         List<BoardGetResponseDto> response = boardService.getBoards();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     // 3. 보드 단건 조회

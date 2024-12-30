@@ -6,6 +6,7 @@ import com.example.oner.dto.list.ListResponseDto;
 import com.example.oner.entity.Board;
 import com.example.oner.entity.ListEntity;
 import com.example.oner.entity.Member;
+import com.example.oner.entity.User;
 import com.example.oner.enums.MemberRole;
 import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.CustomException;
@@ -34,8 +35,8 @@ public class ListService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
-
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회
         Board board = boardRepository.findById(requestDto.getBoardId())
@@ -66,7 +67,8 @@ public class ListService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 리스트 조회
         ListEntity list = listRepository.findById(listId)
@@ -105,8 +107,8 @@ public class ListService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
-
+        User user = userDetails.getUser();
+        Member member = user.getMember();
         // 리스트 조회
         ListEntity list = listRepository.findById(listId)
                 .orElseThrow(() -> new CustomException(ErrorCode.LIST_NOT_FOUND));
