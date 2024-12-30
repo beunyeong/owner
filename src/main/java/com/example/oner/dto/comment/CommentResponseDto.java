@@ -2,7 +2,9 @@ package com.example.oner.dto.comment;
 
 import com.example.oner.entity.Comment;
 import com.example.oner.enums.UserStatus;
+import lombok.Getter;
 
+@Getter
 public class CommentResponseDto {
 
     private final Long id;

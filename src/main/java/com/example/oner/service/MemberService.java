@@ -8,13 +8,16 @@ import com.example.oner.entity.User;
 import com.example.oner.entity.Workspace;
 import com.example.oner.enums.MemberRole;
 import com.example.oner.enums.MemberWait;
+import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.BadRequestException;
+import com.example.oner.error.exception.CustomException;
 import com.example.oner.error.exception.MemberNotAuthorizedException;
 import com.example.oner.repository.MemberRepository;
 import com.example.oner.repository.UserRepository;
 import com.example.oner.repository.WorkspaceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,13 +40,22 @@ public class MemberService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userDetails.getUser();
 
+
+
+        Long workspaceId = memberCreateRequestDto.getWorkspaceId();
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new EntityNotFoundException("해당하는 워크스페이스가 없습니다."));
+
         //타겟 유저의 유무를 검사
-        User targetUser = userRepository.findByIdOrElseThrow(userId);  //Exception 나중에 확인하기
+        User targetUser = userRepository.findByIdOrElseThrow(userId);
+
+
+        //타켓유저가 해당 워크스페이스의 멤버인지 확인하여 검사하는 부분
+        Optional<Member> existingMember = memberRepository.findByUserIdAndWorkspaceId(userId, workspaceId);
+        if (existingMember.isPresent()) {
+            throw new CustomException(ErrorCode.INVITED_MEMBER);
+        }
 
         MemberRole role = memberCreateRequestDto.getRole();  // workspace/board/read
-        Long workspaceId = memberCreateRequestDto.getWorkspaceId();
-
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new EntityNotFoundException("해당하는 워크스페이스가 없습니다."));
 
         //로그인한 유저의 해당 워크스페이스 멤버정보
         Member foundMember = memberRepository.findByUserIdAndWorkspaceId(user.getId(),  workspaceId).orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다"));
