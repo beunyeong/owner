@@ -115,7 +115,8 @@
 
 
 ## 와이어프레임
-![img_6.png](img_6.png)
+<img width="985" alt="image" src="https://github.com/user-attachments/assets/a3f89b15-10f2-4b23-b01a-ccdcda14df0a" />
+
 
 ## [API 명세서](https://teamsparta.notion.site/1582dc3ef51481d99ba3c49760a2d77f)
 <details> <summary>**1. 회원가입/로그인**</summary>
@@ -185,10 +186,8 @@
 
 
 ## ERD
-![img_5.png](img_5.png)
+<img width="1094" alt="image" src="https://github.com/user-attachments/assets/f15e6460-bd82-4ccd-9a25-774a20a5eddc" />
 
-## 프로젝트 파일 구조
-확인중
 
 
 ## Trouble Shooting
