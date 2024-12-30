@@ -47,4 +47,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     }
     boolean existsByUserAndWorkspaceId(User user, Long workspaceId);
 
+    boolean existsByUserIdAndWorkspaceId(Long id, Long workspaceId);
+
 }

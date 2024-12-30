@@ -30,7 +30,8 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<CardsResponseDto> getAllCards(CardRequestDto cardRequestDto) {
+    public ResponseEntity<CardsResponseDto> getAllCards(
+            @RequestBody CardRequestDto cardRequestDto) {
         return cardService.getAllCards(cardRequestDto);
     }
 

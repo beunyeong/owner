@@ -17,9 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.oner.error.errorcode.ErrorCode.EMAIL_FORM_ERROR;
-import static com.example.oner.error.errorcode.ErrorCode.INVALID_USER_ROLE;
-
 @Service
 @RequiredArgsConstructor
 public class WorkspaceService {
@@ -44,7 +41,7 @@ public class WorkspaceService {
         User user = userRepository.findByEmailOrElseThrow(email);
         // ADMIN 권한 확인
         if (!user.isAdmin()) {
-            throw new CustomException(INVALID_USER_ROLE);
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
         Workspace workspace = workspaceRepository.save(
@@ -105,7 +102,7 @@ public class WorkspaceService {
 
         // 요청한 유저가 해당 워크스페이스 멤버인지 확인
         if (!memberRepository.existsByUserAndWorkspace(user, workspace)) {
-            throw new CustomException(EMAIL_FORM_ERROR);
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
         workspace.updateWorkspace(name, description);
@@ -128,7 +125,7 @@ public class WorkspaceService {
 
         // 해당 워크스페이스 멤버인지 권한 확인
         if (!memberRepository.existsByUserAndWorkspace(user, workspace)) {
-            throw new CustomException(EMAIL_FORM_ERROR);
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
         workspaceRepository.delete(workspace);

@@ -100,7 +100,7 @@ public class CardService {
 
         Long workspaceId = cardRequestDto.getWorkspaceId();
 
-        boolean isMember = memberRepository.existsByUserAndWorkspaceId(user, workspaceId);
+        boolean isMember = memberRepository.existsByUserIdAndWorkspaceId(user.getId(), workspaceId);
         if (!isMember) {
             throw new EntityNotFoundException("워크스페이스에 속한 멤버가 아닙니다.");
         }
@@ -179,7 +179,7 @@ public class CardService {
             throw new MemberNotAuthorizedException();
         }
 
-        card.plusViews(card.getViews() + 1);
+        card.plusViews(card.getViews());
         cardRepository.save(card);
 
         CardDetailResponseDto responseDto = new CardDetailResponseDto(card);
