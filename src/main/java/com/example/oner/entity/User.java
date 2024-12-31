@@ -41,6 +41,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Member> member = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Workspace> workspaces = new ArrayList<>();
+
     public User(){}
 
     public User(UserRequestDto requestDto){
