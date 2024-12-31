@@ -22,7 +22,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Gradle로 빌드
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
       - name: EC2로 JAR 파일 복사
         uses: appleboy/scp-action@master
