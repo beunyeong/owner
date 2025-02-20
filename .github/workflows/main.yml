@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           source: "./build/libs/*.jar"
-          target: "~"
+          target: "~/app"
 
       - name: SSH 명령어 실행
         uses: appleboy/ssh-action@master
@@ -46,24 +46,24 @@ jobs:
             export aws_credentials_accessKey=${{ secrets.AWS_ACCESS_KEY }}
             export aws_credentials_secretKey=${{ secrets.AWS_SECRET_KEY }}
             export aws_region=${{ secrets.AWS_REGION }}
-            SOURCE_DIR=~/build/libs
-            FILE_NAME=$(basename $(find $SOURCE_DIR/*.jar))
 
-            # Java 프로세스를 PID로 종료
-            PID=$(pgrep -f "java -jar $FILE_NAME")
+            SOURCE_DIR=~/app
+            FILE_NAME=$(ls -t $SOURCE_DIR/*.jar | head -n 1)
+
+            echo "#### 실행할 JAR 파일: $FILE_NAME ####"
+
+            PID=$(pgrep -f "$FILE_NAME")
             if [ -z "$PID" ]; then
-              echo "#### 프로세스가 존재하지 않습니다 ####"
+              echo "#### 실행 중인 프로세스 없음 ####"
             else
-              echo "#### 프로세스 $PID 종료 ####"
+              echo "#### 프로세스 종료 중... ####"
               sudo kill $PID
+              sleep 5
+              if ps -p $PID > /dev/null; then
+                echo "#### 프로세스 강제 종료 ####"
+                sudo kill -9 $PID
+              fi
             fi
 
-            echo "#### $SOURCE_DIR/$FILE_NAME 실행 ####"
-            
-            # 환경 변수 설정
-            export DB_URL=${{ secrets.DB_URL }}
-            export DB_USERNAME=${{ secrets.DB_USERNAME }}
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-
-            # JAR 파일 실행
-            nohup java -jar $SOURCE_DIR/$FILE_NAME > /dev/null 2>&1 &
+            echo "#### 새로운 애플리케이션 실행 ####"
+            nohup env DB_URL=${{ secrets.DB_URL }} DB_USERNAME=${{ secrets.DB_USERNAME }} DB_PASSWORD=${{ secrets.DB_PASSWORD }} java -jar $FILE_NAME > ~/app/nohup.out 2>&1 &
