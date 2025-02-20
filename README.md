@@ -23,7 +23,7 @@
 
 
 ## 팀소개
-![img_4.png](img_4.png)
+![img_4.png](src/main/resources/static/images/img_4.png)
 
 
 ## 프로젝트 계기
@@ -121,21 +121,21 @@
 ## [API 명세서](https://teamsparta.notion.site/1582dc3ef51481d99ba3c49760a2d77f)
 <details> <summary>**1. 회원가입/로그인**</summary>
 
-![img_7.png](img_7.png)
+![img_7.png](src/main/resources/static/images/img_7.png)
 
 </details>
 
 
 <details> <summary>**2. 멤버**</summary>
 
-![img_14.png](img_14.png)
+![img_14.png](src/main/resources/static/images/img_14.png)
 
 </details>
 
 
 <details> <summary>**3. 워크스페이스**</summary>
 
-![img_11.png](img_11.png)
+![img_11.png](src/main/resources/static/images/img_11.png)
 
 </details>
 
@@ -143,43 +143,43 @@
 <details> <summary>**4. 보드**</summary>
 
 
-![img_15.png](img_15.png)
-![img_16.png](img_16.png)
+![img_15.png](src/main/resources/static/images/img_15.png)
+![img_16.png](src/main/resources/static/images/img_16.png)
 
 </details>
 
 
 <details> <summary>**5. 리스트**</summary>
 
-![img_17.png](img_17.png)
+![img_17.png](src/main/resources/static/images/img_17.png)
 
 </details>
 
 
 <details> <summary>**6. 카드**</summary>
 
-![img_13.png](img_13.png)
+![img_13.png](src/main/resources/static/images/img_13.png)
 
 </details>
 
 
 <details> <summary>**7. 댓글**</summary>
 
-![img_9.png](img_9.png)
+![img_9.png](src/main/resources/static/images/img_9.png)
 
 </details>
 
 
 <details> <summary>**8. 검색**</summary>
 
-![img_12.png](img_12.png)
+![img_12.png](src/main/resources/static/images/img_12.png)
 
 </details>
 
 
 <details> <summary>**9. 첨부파일**</summary>
 
-![img_10.png](img_10.png)
+![img_10.png](src/main/resources/static/images/img_10.png)
 
 </details>
 
@@ -194,4 +194,3 @@
 - [손민석 Trouble Shooting : S3버킷 액세스 권한 및 정책 ](https://usejava.tistory.com/35)
 - [백은영 Trouble Shooting : 데이터 무결성과 중복 데이터 문제 ](https://beunyeong.tistory.com/176)
 - [박용재 Trouble Shooting : Slack Api ](https://velog.io/@skykid/Oner-Slack-Api-TrubleShooting)
-- [김태훈 Trouble Shooting : 제목입력 ](링크 붙여넣기....)
