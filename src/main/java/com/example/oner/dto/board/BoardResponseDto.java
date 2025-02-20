@@ -5,6 +5,7 @@ import com.example.oner.entity.Board;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class BoardResponseDto {
@@ -26,20 +27,6 @@ public class BoardResponseDto {
     private List<ListResponseDto> lists;
 
 
-    public BoardResponseDto(Long id, String title, Long workspaceId,
-                            String backgroundColor, String backgroundImageUrl,
-                            LocalDateTime createdAt, LocalDateTime updatedAt,
-                            List<ListResponseDto> lists) {
-        this.id = id;
-        this.title = title;
-        this.workspaceId = workspaceId;
-        this.backgroundColor = backgroundColor;
-        this.backgroundImageUrl = backgroundImageUrl;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.lists = lists;
-    }
-
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getBoardTitle();
@@ -48,7 +35,11 @@ public class BoardResponseDto {
         this.backgroundImageUrl = board.getBackgroundImageUrl();
         this.createdAt = board.getCreatedAt();
         this.updatedAt = board.getUpdatedAt();
-        this.lists = null; // 기본값으로 설정
+        this.lists = board.getLists()
+                .stream()
+                .map(ListResponseDto::new)
+                .collect(Collectors.toList());
+
     }
 
 }

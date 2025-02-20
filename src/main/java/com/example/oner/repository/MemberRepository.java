@@ -8,6 +8,7 @@ import com.example.oner.enums.MemberWait;
 import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.CustomException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,9 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    @Query("SELECT m FROM Member m WHERE m.user.id = :userId AND m.workspace.id = :workspaceId AND m.role = 'BOARD'")
+    Optional<Member> findByUserIdAndWorkspaceIdAndRole(@Param("userId") Long userId, @Param("workspaceId") Long workspaceId);
 
     Optional<Member> findByUserIdAndWorkspaceId(Long userId, Long workspaceId);
 
@@ -33,6 +37,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         return findByUserAndWorkspace(user, workspace).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
+    @Query("SELECT m FROM Member m WHERE m.workspace.id = :workspaceId")
+    List<Member> getMembersById(Long workspaceId);
+
     @Query("SELECT m FROM Member m JOIN FETCH m.workspace WHERE m.user = :user")
     List<Member> findAllByUser(@Param("user") User user);
     default List<Member> findByAllUserOrElseThrow(User user) {
@@ -44,4 +51,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     }
     boolean existsByUserAndWorkspaceId(User user, Long workspaceId);
 
+    boolean existsByUserIdAndWorkspaceId(Long id, Long workspaceId);
+
+    @Modifying
+    @Query("DELETE FROM Member m WHERE m.workspace.id = :workspaceId")
+    void deleteByWorkspaceId(@Param("workspaceId") Long workspaceId);
 }

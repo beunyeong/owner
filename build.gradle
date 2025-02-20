@@ -67,3 +67,15 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.example.OnerApplicationClass'
+        )
+    }
+}

@@ -1,17 +1,14 @@
 package com.example.oner.entity;
 
-import com.example.oner.dto.User.UserRequestDto;
+import com.example.oner.dto.user.UserRequestDto;
 import com.example.oner.enums.UserRole;
 import com.example.oner.enums.UserStatus;
+import com.example.oner.error.errorcode.ErrorCode;
+import com.example.oner.error.exception.CustomException;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,8 +38,11 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private UserStatus userStatus = UserStatus.ACTIVE;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = true)
-    private Member member;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Member> member = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Workspace> workspaces = new ArrayList<>();
 
     public User(){}
 
@@ -71,8 +71,16 @@ public class User extends BaseEntity{
         return this.userRole == UserRole.ADMIN;
     }
 
+    // 멤버 여부 확인
     public Member getMember() {
-        return this.member;
+        if(this.member.isEmpty()) {
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        // 멤버가 있으면 첫번째 멤버 조회
+        return this.member.stream()
+                .findFirst().orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
     }
 
 }

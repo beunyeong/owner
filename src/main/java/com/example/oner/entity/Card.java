@@ -70,6 +70,6 @@ public class Card extends BaseEntity {
 
 
     public void plusViews(long l) {
-        this.views += l;
+        this.views = l +1;
     }
 }

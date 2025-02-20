@@ -9,8 +9,15 @@ import com.example.oner.error.exception.MemberNotAuthorizedException;
 import com.example.oner.repository.CardRepository;
 import com.example.oner.repository.ListRepository;
 import com.example.oner.repository.MemberRepository;
+import com.example.oner.specification.CardSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +30,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CardService {
+
 
     private final CardRepository cardRepository;
     private final ListRepository listRepository;
@@ -100,7 +109,9 @@ public class CardService {
 
         Long workspaceId = cardRequestDto.getWorkspaceId();
 
-        boolean isMember = memberRepository.existsByUserAndWorkspaceId(user, workspaceId);
+        boolean isMember = memberRepository.existsByUserIdAndWorkspaceId(user.getId(), workspaceId);
+
+
         if (!isMember) {
             throw new EntityNotFoundException("워크스페이스에 속한 멤버가 아닙니다.");
         }
@@ -184,6 +195,18 @@ public class CardService {
 
         CardDetailResponseDto responseDto = new CardDetailResponseDto(card);
         return ResponseEntity.status(200).body(responseDto);
+    }
+
+    public Page<CardDetailResponseDto> searchCards(CardSearchRequestDto request) {
+        Specification<Card> specification = Specification.where(CardSpecification.belongsToBoard(request.getBoardId()))
+                .and(CardSpecification.hasTitle(request.getTitle()))
+                .and(CardSpecification.hasDescription(request.getDescription()))
+                .and(CardSpecification.hasDueDateBetween(request.getDueDateFrom(), request.getDueDateTo()))
+                .and(CardSpecification.belongsToList(request.getListId()));
+
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("createdAt").descending());
+        return cardRepository.findAll(specification, pageable).map(CardDetailResponseDto::new);
     }
 
 }

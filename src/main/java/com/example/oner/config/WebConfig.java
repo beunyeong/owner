@@ -47,8 +47,7 @@ public class WebConfig {
     /**
      * 화이트 리스트.
      */
-    private static final String[] WHITE_LIST = {"/users/login", "/users/signup", "/favicon.ico",
-            "/error"};
+    private static final String[] WHITE_LIST = {"/users/login", "/users/signup", "/error"};
 
     /**
      * security 필터.
@@ -61,17 +60,17 @@ public class WebConfig {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(WHITE_LIST).permitAll()
-                                // static 리소스 경로
-                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                                // 일부 dispatch 타입
-                                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE,
-                                        DispatcherType.ERROR).permitAll()
-                                // path 별로 접근이 가능한 권한 설정
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/user/**").hasRole("USER")
-                                // 나머지는 인증이 필요
-                                .anyRequest().authenticated()
+                                auth.requestMatchers(WHITE_LIST).permitAll()
+                                        // static 리소스 경로
+                                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                                        // 일부 dispatch 타입
+                                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE,
+                                                DispatcherType.ERROR).permitAll()
+                                        // path 별로 접근이 가능한 권한 설정
+//                                .requestMatchers("/admin/**").hasRole("ADMIN")
+//                                .requestMatchers("/user/**").hasRole("USER")
+                                        // 나머지는 인증이 필요
+                                        .anyRequest().authenticated()
                 )
                 // Spring Security 예외에 대한 처리를 핸들러에 위임.
                 .exceptionHandling(handler -> handler
@@ -79,7 +78,8 @@ public class WebConfig {
                         .accessDeniedHandler(accessDeniedHandler))
                 // JWT 기반 테스트를 위해 SecurityContext를 가져올 때 HttpSession을 사용하지 않도록 설정.
                 .sessionManagement(
-                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session
+                                -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

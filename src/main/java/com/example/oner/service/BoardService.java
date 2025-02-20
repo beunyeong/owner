@@ -1,10 +1,12 @@
 package com.example.oner.service;
 
 import com.example.oner.config.auth.UserDetailsImpl;
+import com.example.oner.dto.board.BoardGetResponseDto;
 import com.example.oner.dto.board.BoardRequestDto;
 import com.example.oner.dto.board.BoardResponseDto;
 import com.example.oner.entity.Board;
 import com.example.oner.entity.Member;
+import com.example.oner.entity.User;
 import com.example.oner.entity.Workspace;
 import com.example.oner.enums.MemberRole;
 import com.example.oner.error.errorcode.ErrorCode;
@@ -36,11 +38,17 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 워크스페이스 조회
         Workspace workspace = workspaceRepository.findByIdAndMembersContaining(requestDto.getWorkspaceId(), member)
                 .orElseThrow(() -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND));
+
+        // 보드 제목이 비어 있는 경우
+        if (requestDto.getTitle() == null || requestDto.getTitle().trim().isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST);
+        }
 
         // 멤버 권한 확인
         if (!member.hasPermission(MemberRole.BOARD)) {
@@ -61,11 +69,12 @@ public class BoardService {
     }
 
     // 2. 보드 전체 조회
-    public List<BoardResponseDto> getBoards() {
+    public List<BoardGetResponseDto> getBoards() {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 워크스페이스 조회
         List<Workspace> workspaces = workspaceRepository.findAllByMembersContaining(member);
@@ -75,7 +84,14 @@ public class BoardService {
 
         return boardRepository.findAllByWorkspaceIn(workspaces)
                 .stream()
-                .map(BoardResponseDto::new)
+                .map(board -> new BoardGetResponseDto(
+                        board.getId(),
+                        board.getBoardTitle(),
+                        board.getWorkspace().getId(),
+                        board.getBackgroundColor(),
+                        board.getBackgroundImageUrl(),
+                        board.getCreatedAt(),
+                        board.getUpdatedAt()))
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +100,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회 및 권한 확인
         Board board = boardRepository.findById(boardId)
@@ -102,7 +119,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회 및 권한 확인
         Board board = boardRepository.findById(boardId)
@@ -123,7 +141,8 @@ public class BoardService {
         // 인증 객체를 이용해 로그인한 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Member member = userDetails.getMember();
+        User user = userDetails.getUser();
+        Member member = user.getMember();
 
         // 보드 조회 및 권한 확인
         Board board = boardRepository.findById(boardId)

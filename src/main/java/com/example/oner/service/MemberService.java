@@ -3,26 +3,25 @@ package com.example.oner.service;
 
 import com.example.oner.config.auth.UserDetailsImpl;
 import com.example.oner.dto.Member.*;
-import com.example.oner.dto.User.LoginResponseDto;
 import com.example.oner.entity.Member;
 import com.example.oner.entity.User;
 import com.example.oner.entity.Workspace;
 import com.example.oner.enums.MemberRole;
 import com.example.oner.enums.MemberWait;
+import com.example.oner.error.errorcode.ErrorCode;
 import com.example.oner.error.exception.BadRequestException;
+import com.example.oner.error.exception.CustomException;
 import com.example.oner.error.exception.MemberNotAuthorizedException;
 import com.example.oner.repository.MemberRepository;
 import com.example.oner.repository.UserRepository;
 import com.example.oner.repository.WorkspaceRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -35,19 +34,21 @@ public class MemberService {
     private final WorkspaceRepository workspaceRepository;
 
     //받아온 userid는 멤버에 초대될 대상의 id값
-    public ResponseEntity<MemberCreateResponseDto> createMember( Long userId, MemberCreateRequestDto memberCreateRequestDto   ) {
+    public ResponseEntity<MemberCreateResponseDto> createMember( Long userId, MemberCreateRequestDto memberCreateRequestDto, User user  ) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
+        Long workspaceId = memberCreateRequestDto.getWorkspaceId();
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new EntityNotFoundException("해당하는 워크스페이스가 없습니다."));
 
         //타겟 유저의 유무를 검사
-        User targetUser = userRepository.findByIdOrElseThrow(userId);  //Exception 나중에 확인하기
+        User targetUser = userRepository.findByIdOrElseThrow(userId);
+
+        //타켓유저가 해당 워크스페이스의 멤버인지 확인하여 검사하는 부분
+        Optional<Member> existingMember = memberRepository.findByUserIdAndWorkspaceId(userId, workspaceId);
+        if (existingMember.isPresent()) {
+            throw new CustomException(ErrorCode.INVITED_MEMBER);
+        }
 
         MemberRole role = memberCreateRequestDto.getRole();  // workspace/board/read
-        Long workspaceId = memberCreateRequestDto.getWorkspaceId();
-
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(() -> new EntityNotFoundException("해당하는 워크스페이스가 없습니다."));
 
         //로그인한 유저의 해당 워크스페이스 멤버정보
         Member foundMember = memberRepository.findByUserIdAndWorkspaceId(user.getId(),  workspaceId).orElseThrow(() -> new EntityNotFoundException("해당 멤버를 찾을 수 없습니다"));
@@ -65,11 +66,9 @@ public class MemberService {
         return ResponseEntity.ok(memberCreateResponseDto);
     }
 
-    public ResponseEntity<MemberResponseDto> getAllUsers( MemberRequestDto memberRequestDto) {
+    public ResponseEntity<MemberResponseDto> getAllUsers( MemberRequestDto memberRequestDto, User user) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
+
 
         Long workspaceId = memberRequestDto.getWorkspaceId();
 
@@ -86,20 +85,18 @@ public class MemberService {
         if (!isWorkspaceMember) {
             throw new MemberNotAuthorizedException();
         }
-        List<Member> workspaceMembers = workspaceRepository.getMembersById(workspaceId);
+        List<Member> workspaceMembers =memberRepository.getMembersById(workspaceId);
+        System.out.println("멤버 수: " + workspaceMembers.size());
         List<MemberDetailDto> memberDetailDtos = new ArrayList<>();
 
         for (Member member : workspaceMembers) {
-            // Member 객체에서 User 객체를 가져옴
             User workspaceUser = member.getUser();
 
-            // 멤버의 이름, 사용자 ID, 역할 정보를 가져와서 MemberDetailDto 객체 생성
             MemberDetailDto memberDetailDto = new MemberDetailDto(
-                    workspaceUser.getName(),         // User의 이름
-                    workspaceUser.getId(),           // User의 ID
-                    member.getRole()        // Member의 역할
+                    workspaceUser.getName(),
+                    workspaceUser.getId(),
+                    member.getRole()
             );
-            // 생성된 객체를 리스트에 추가
             memberDetailDtos.add(memberDetailDto);
         }
         MemberResponseDto memberResponseDto = new MemberResponseDto(workspaceId, memberDetailDtos);
@@ -107,11 +104,8 @@ public class MemberService {
         return ResponseEntity.ok(memberResponseDto);
         }
 
-    public ResponseEntity<MemberSelectResponseDto> getUser( Long memberId, Long workspaceId) {
+    public ResponseEntity<MemberSelectResponseDto> getUser( Long memberId, Long workspaceId, User user) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
 
         boolean isUserWorkspaceMember = workspaceRepository.existsByIdAndUserId(workspaceId, user.getId());
         if (!isUserWorkspaceMember) {
@@ -134,11 +128,8 @@ public class MemberService {
     }
 
 
-    public ResponseEntity<MemberInviteResponseDto> resultInvite( MemberInviteRequestDto memberInviteRequestDto) {
+    public ResponseEntity<MemberInviteResponseDto> resultInvite( MemberInviteRequestDto memberInviteRequestDto, User user) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
 
         Member member = (Member) memberRepository.findByUserIdAndWorkspaceIdAndWait(
                         user.getId(), memberInviteRequestDto.getWorkspaceId(), MemberWait.WAIT)
@@ -159,10 +150,8 @@ public class MemberService {
 
     }
 
-    public ResponseEntity<Map<String, String>> leaveWorkspace(Long workspaceId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
+    public ResponseEntity<Map<String, String>> leaveWorkspace(Long workspaceId, User user) {
+
 
         Member member = memberRepository.findByUserIdAndWorkspaceId(user.getId(), workspaceId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 워크스페이스에서 멤버를 찾을 수 없습니다."));
@@ -175,10 +164,8 @@ public class MemberService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Map<String, String>> fireMember(Long memberId){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
+    public ResponseEntity<Map<String, String>> fireMember(Long memberId, User user){
+
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("멤버를 찾을 수 없습니다."));
@@ -197,10 +184,8 @@ public class MemberService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<MemberRoleUpdateResponseDto> updateMemberRole(Long memberId, MemberRoleUpdateRequestDto updateMemberRoleRequestDto ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userDetails.getUser();
+    public ResponseEntity<MemberRoleUpdateResponseDto> updateMemberRole(Long memberId, MemberRoleUpdateRequestDto updateMemberRoleRequestDto, User user ) {
+
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("멤버를 찾을 수 없습니다."));
@@ -217,7 +202,7 @@ public class MemberService {
         }
 
         try {
-            MemberRole newRole = MemberRole.valueOf(String.valueOf(updateMemberRoleRequestDto.getRole()));
+            MemberRole newRole = updateMemberRoleRequestDto.getRole();
             member.setRole(newRole);
             memberRepository.save(member);
         } catch (IllegalArgumentException e) {

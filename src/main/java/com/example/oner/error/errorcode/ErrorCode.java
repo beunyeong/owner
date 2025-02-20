@@ -14,6 +14,9 @@ public enum ErrorCode {
     PASSWORD_PATTERN_ERROR(BAD_REQUEST, "비밀번호 패턴 에러"),
     INVALID_ROLE(BAD_REQUEST, "잘못된 역할입니다."),
     MESSAGE_SENDING_ERROR(BAD_REQUEST,"message send error"),
+    DUPLICATE_POSITION_LIST(BAD_REQUEST, "중복된 position 입니다."),
+    INVITED_MEMBER(BAD_REQUEST, "멤버로 초대된 유저입니다."),
+    INVALID_REQUEST(BAD_REQUEST, "[필수값 누락] 보드 제목을 입력해주세요."),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -31,11 +34,12 @@ public enum ErrorCode {
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "유저 정보를 찾을 수 없습니다."),
+    MEMBER_NOT_FOUND(NOT_FOUND, "멤버 정보를 찾을 수 없습니다."),
+    CARD_NOT_FOUND(NOT_FOUND, "카드 정보를 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "댓글 정보를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(NOT_FOUND, "보드 정보를 찾을 수 없습니다."),
     LIST_NOT_FOUND(NOT_FOUND, "리스트 정보를 찾을 수 없습니다."),
     WORKSPACE_NOT_FOUND(NOT_FOUND, "사용자의 워크스페이스를 찾을 수 없습니다."),
-
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),

@@ -28,5 +28,7 @@ public interface ListRepository extends JpaRepository<ListEntity, Long> {
                                  @Param("start") int start,
                                  @Param("end") int end);
 
+    boolean existsByBoardIdAndPositionList(Long boardId, int positionList);
+
 }
 
