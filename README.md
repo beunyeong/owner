@@ -192,6 +192,6 @@
 
 ## Trouble Shooting
 - [손민석 Trouble Shooting : S3버킷 액세스 권한 및 정책 ](https://usejava.tistory.com/35)
-- [백은영 Trouble Shooting : 제목입력 ](링크 붙여넣기....)
+- [백은영 Trouble Shooting : 데이터 무결성과 중복 데이터 문제 ](https://beunyeong.tistory.com/176)
 - [박용재 Trouble Shooting : Slack Api ](https://velog.io/@skykid/Oner-Slack-Api-TrubleShooting)
 - [김태훈 Trouble Shooting : 제목입력 ](링크 붙여넣기....)
